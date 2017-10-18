@@ -21,20 +21,31 @@ const (
 
 func (s *server) GetTransactions(ctx context.Context, in *pb.GetRequest) (*pb.GetReply, error) {
 
-	var transactions = make([]*pb.Transaction, in.Count)
+	transactions := make([]*pb.Transaction, in.Count)
 	var i uint32
-	var today = time.Now()
+	today := time.Now()
 	// Generate transactions
 	for ; i < in.Count; i++ {
 		// Make some random data
-		var randDate, _ = proto.TimestampProto(today.Add(-time.Duration(rand.Intn(10000)) * time.Minute))
-		var randAmount = rand.Float32() + float32(rand.Intn(1000))
-		var randLeger = randomdata.SillyName() + " " + randomdata.SillyName()
-		var randCompany = randomdata.SillyName() + " Corp"
+		randDate, _ := proto.TimestampProto(today.Add(-time.Duration(rand.Intn(10000)) * time.Minute))
+		randAmount := rand.Float32() + float32(rand.Intn(1000))
+		// Throw some negatives in there
+		if rand.Intn(2) == 0 {
+			randAmount *= -1
+		}
+		randLeger := randomdata.SillyName() + " " + randomdata.SillyName()
+		randCompany := randomdata.SillyName() + " Corp"
 		transactions[i] = &pb.Transaction{Date: randDate, Ledger: randLeger, Amount: randAmount, Company: randCompany}
 	}
 
-	return &pb.GetReply{Transactions: transactions, NextCursor: in.Cursor + "123"}, nil
+	cursor := in.Cursor + "123"
+
+	// Eventually don't return a cursor to simulate the last page
+	if rand.Intn(5) == 0 {
+		return &pb.GetReply{Transactions: transactions}, nil
+	}
+	return &pb.GetReply{Transactions: transactions, NextCursor: cursor}, nil
+
 }
 
 type server struct{}
