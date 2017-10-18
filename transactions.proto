@@ -17,6 +17,7 @@ message GetRequest {
 // Transaction response data
 message GetReply {
   repeated Transaction transactions = 1;
+  string nextCursor = 2;
 }
 
 // An individual transaction
