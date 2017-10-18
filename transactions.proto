@@ -1,0 +1,44 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+// The transactions service
+service Transactions {
+  rpc GetTransactions (GetRequest) returns (GetReply) {}
+}
+
+// Get a list of transactions for a user, with a cursor for paging
+message GetRequest {
+  string userId = 1;
+  string cursor = 2;
+  uint32 count = 3;
+
+}
+
+// Transaction response data
+message GetReply {
+  repeated Transaction transactions = 1;
+}
+
+// An individual transaction
+message Transaction {
+  google.protobuf.Timestamp date = 1;
+  string ledger = 2;
+  float amount = 3;
+  string company = 4;
+}
+
+/*
+{
+  "totalCount": 32, // Integer, total number of transactions across all pages
+  "page": 1, // Integer, current page
+  "transactions": [
+    {
+      "Date": "2013-12-22", // String, date of transaction
+      "Ledger": "Phone & Internet Expense", // String, ledger name
+      "Amount": "-110.71", // String, amount
+      "Company": "SHAW CABLESYSTEMS CALGARY AB" // String, company name
+    },
+    ...
+  ]
+}
+*/
