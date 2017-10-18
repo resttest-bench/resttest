@@ -2,8 +2,11 @@ package main
 
 import (
 	"log"
+	"strconv"
+	"time"
 
 	pb "github.com/resttest-bench/resttest/transactions"
+
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -27,4 +30,9 @@ func main() {
 		log.Fatalf("Request failed: %v", err)
 	}
 	log.Printf("Response: %s", r)
+	for _, transaction := range r.Transactions {
+		log.Printf(strconv.FormatFloat(float64(transaction.Amount), 'f', 2, 32))
+		log.Printf(time.Unix(transaction.Date.GetSeconds(), int64(transaction.Date.GetNanos())).String())
+
+	}
 }
